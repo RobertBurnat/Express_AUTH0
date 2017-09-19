@@ -21,6 +21,7 @@ npm install
     pug
 and 
 npm install csurf forms xtend --save
+npm start
 ```
 
 Rename `.env.example` to `.env` and replace the values for `AUTH0_CLIENT_ID`, `AUTH0_DOMAIN`, and `AUTH0_CLIENT_SECRET` with your Auth0 credentials. If you don't yet have an Auth0 account, [sign up](https://auth0.com/signup) for free.
