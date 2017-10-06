@@ -4,6 +4,7 @@ var csurf = require('csurf');
 var express = require('express');
 var extend = require('xtend');
 var forms = require('forms');
+var User = require('./models');
 
 var profileForm = forms.create({
 	givenName: forms.fields.string({ required: true }),
@@ -34,35 +35,41 @@ module.exports = function profile() {
 		profileForm.handle(req, {
 			success: function(form) {
 				req.user.givenName = form.data.givenName;
-				req.user.surname = form.data.surname;
-				req.user.customData.streetAddress = form.data.streetAddress;
-            	req.user.customData.city = form.data.city;
-           		req.user.customData.state = form.data.state;
-            	req.user.customData.zip = form.data.zip;
-				req.user.customData.save();
-				req.user.save(function(err) {
-					if (err) {
-						if (err.developerMessage) {
-							console.error(err);
-						}
-						renderForm(req, res, {
-							errors: [{
-							error: err.userMessage ||
-							err.message || String(err)
-							}]
-						});
-					} else {
-						renderForm(req, res, {
-							saved: true
-						});
-					}
-				});
-			},
-			empty: function() {
-				renderForm(req,res);
-			}
-		});
-	});
+                req.user.surname = form.data.surname;
+                var address ={
+                    streetAddress: form.data.streetAddress,
+                    city: form.data.city,
+                    state: form.data.state,
+                    zip: form.data.zip
+                };
+                req.user.address = address;
+                var user = new User();
+                user.givenName = req.user.givenName;
+                user.surname = req.user.surname;
+                user.address =req.user.address;
 
-	return router;
+                user.save(function(err) {
+                    if (err) {
+                        if (err.developerMessage){
+                            console.error(err);
+                         }
+                        renderForm(req, res, {
+                            errors: [{
+                                error: err.userMessage ||
+                                err.message || String(err)
+                            }]
+                        });
+                    } else {
+                        renderForm(req, res, {
+                            saved: true
+                        });
+                    }
+                });
+            },
+            empty: function() {
+                renderForm(req, res);
+            }
+        });
+    });
+    return router;
 };

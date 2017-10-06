@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
+const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -45,6 +46,8 @@ passport.deserializeUser(function(user, done) {
 });
 
 const app = express();
+
+mongoose.connect('mongodb://localhost/usersDB')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
