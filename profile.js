@@ -5,6 +5,7 @@ var express = require('express');
 var extend = require('xtend');
 var forms = require('forms');
 var User = require('./models');
+var mongoose = require('mongoose');
 
 var profileForm = forms.create({
 	givenName: forms.fields.string({ required: true }),
@@ -36,17 +37,18 @@ module.exports = function profile() {
 			success: function(form) {
 				req.user.givenName = form.data.givenName;
                 req.user.surname = form.data.surname;
-                var address ={
+                var address = {
                     streetAddress: form.data.streetAddress,
                     city: form.data.city,
                     state: form.data.state,
                     zip: form.data.zip
                 };
                 req.user.address = address;
+
                 var user = new User();
                 user.givenName = req.user.givenName;
                 user.surname = req.user.surname;
-                user.address =req.user.address;
+                user.address = req.user.address;
 
                 user.save(function(err) {
                     if (err) {
